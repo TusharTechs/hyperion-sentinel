@@ -11,3 +11,4 @@ wheels/
 .recon/
 ca-bundle.pem
 .env
+video/

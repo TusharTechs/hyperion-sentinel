@@ -81,3 +81,45 @@ ba = ('<text x="100" y="120" font-size="54" font-weight="800" fill="url(#tx)">Fr
       '<text x="100" y="850" font-size="22" fill="#64748B">Score = Sentinel\'s own deterministic heuristic - not an official HYPER-AI metric. Numbers from a real run.</text>')
 (OUT / "4-before-after.svg").write_text(wrap(ba))
 print("slides written")
+
+# ---- video scenes (problem / impact / close) ----
+problem = ('<text x="100" y="120" font-size="58" font-weight="800" fill="url(#tx)">Edge deployments fail on the basics</text>'
+           '<text x="100" y="170" font-size="28" fill="#94A3B8">From IoT devices to the cloud, constrained nodes punish sloppy configuration</text>')
+items = [("image: app:latest", "unpinned images change under you", "#F87171"), ("no resources.limits", "one container can starve the node", "#FB923C"),
+         ("no readiness probe", "traffic hits pods that are not ready", "#FBBF24"), ("runs as root", "a breach owns the host", "#F472B6"),
+         ("password in config", "secrets leak through git and images", "#C4B5FD")]
+y = 235
+for t, d, c in items:
+    problem += (f'<rect x="100" y="{y}" width="1400" height="100" rx="18" fill="#0E1A3A" stroke="{c}" stroke-opacity=".6" stroke-width="2"/>'
+                f'<text x="150" y="{y + 62}" font-size="38" font-weight="700" fill="{c}" style="font-family:Menlo,Consolas,monospace">{t}</text>'
+                f'<text x="760" y="{y + 60}" font-size="30" fill="#CBD5E1">{d}</text>')
+    y += 120
+problem += '<text x="100" y="870" font-size="26" fill="#94A3B8">...and developers lose hours digging through YAML to find them.</text>'
+(OUT / "5-problem.svg").write_text(wrap(problem))
+
+impact = ('<text x="100" y="120" font-size="58" font-weight="800" fill="url(#tx)">One conversation instead of a manual audit</text>'
+          '<text x="100" y="170" font-size="28" fill="#94A3B8">Hyperion Sentinel, inside the HYPER-AI IDE</text>')
+cards = [("35 → 65", "edge readiness, verified by re-reading the IDE", "#5EEAD4"), ("7", "analysis areas: Docker, K8s, Compose, HYPER-AI profiles, deps, secrets, completeness", "#93C5FD"),
+         ("0", "changes without your explicit yes - every delete, overwrite and plan asks first", "#FCD34D"), ("203", "automated tests, a real IDE run, and a live Llama 3.1 run", "#C4B5FD")]
+x = 100
+for big, small, c in cards:
+    impact += (f'<rect x="{x}" y="260" width="325" height="400" rx="22" fill="#0E1A3A" stroke="{c}" stroke-opacity=".6" stroke-width="2"/>'
+               f'<text x="{x + 162}" y="400" text-anchor="middle" font-size="{78 if len(big) < 5 else 62}" font-weight="800" fill="{c}">{big}</text>')
+    words, line, ly = small.split(), "", 470
+    for w in words:
+        if len(line) + len(w) > 22:
+            impact += f'<text x="{x + 162}" y="{ly}" text-anchor="middle" font-size="24" fill="#CBD5E1">{line.strip()}</text>'; ly += 34; line = ""
+        line += w + " "
+    impact += f'<text x="{x + 162}" y="{ly}" text-anchor="middle" font-size="24" fill="#CBD5E1">{line.strip()}</text>'
+    x += 358
+impact += '<text x="100" y="780" font-size="30" font-weight="700" fill="#FDE68A">Deterministic tools produce the facts. The LLM only converses.</text>'
+(OUT / "6-impact.svg").write_text(wrap(impact))
+
+close = ('<circle cx="800" cy="330" r="300" fill="url(#halo)"/>' + MARK.format(x=670, y=170, s=2.0) +
+         '<text x="800" y="520" text-anchor="middle" font-size="84" font-weight="800" fill="url(#tx)">Hyperion Sentinel</text>'
+         '<text x="800" y="580" text-anchor="middle" font-size="32" fill="#C7D2FE">Inspect  -  Explain  -  Fix safely  -  Verify</text>'
+         '<text x="800" y="680" text-anchor="middle" font-size="30" fill="#99F6E4">github.com/TusharTechs/hyperion-sentinel</text>'
+         '<text x="800" y="728" text-anchor="middle" font-size="30" fill="#BFDBFE">docker run tushartechs/hyperion:latest</text>'
+         '<text x="800" y="810" text-anchor="middle" font-size="22" fill="#64748B">Veles Hack 2026 - Challenge 1 (HYPER-AI) - built on the official hyperion-starter</text>')
+(OUT / "7-close.svg").write_text(wrap(close))
+print("video scenes written")
