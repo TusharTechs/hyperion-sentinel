@@ -26,14 +26,14 @@ CHAPTERS
 0:50 LIVE - Edge Readiness report in the HYPER-AI IDE
 1:07 What should I fix first?
 1:14 The remediation plan (nothing changes yet)
-1:24 Confirm, apply, verify: 35 -> 65
+1:24 Confirm, apply, verify: 35 to 65
 1:37 RAG: answers grounded in the official HYPER-AI docs
 1:46 Guardrails: off-topic requests refused
 1:52 Human-in-the-loop: asks before deleting
 2:00 Wrap-up
 
 WHAT IT COVERS
-- Working agent: natural language -> real IDE actions (create / edit / delete files, opened in the editor)
+- Working agent: natural language into real IDE actions (create / edit / delete files, opened in the editor)
 - Guardrails: scope + prompt-injection rules, fail closed
 - RAG over the official HYPER-AI documentation, with sources
 - Per-session memory ("fix the second issue", "delete it")
