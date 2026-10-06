@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sensor-api
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: sensor-api
+  template:
+    metadata:
+      labels:
+        app: sensor-api
+    spec:
+      containers:
+        - name: sensor-api
+          image: myorg/sensor-api:latest
+          ports:
+            - containerPort: 8080

@@ -1,4 +1,16 @@
+.git
+.gitignore
 .env
+.env.*
+!.env.example
 .venv
 __pycache__/
 *.py[oc]
+.pytest_cache/
+.recon/
+tests/
+demo/
+scripts/
+knowledge/*.docx
+README.md
+docker-compose.yaml

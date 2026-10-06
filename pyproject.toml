@@ -9,5 +9,16 @@ dependencies = [
     "httpx>=0.28.1",
     "langchain-openai>=1.6.1",
     "python-dotenv>=1.2.3",
+    "ruamel-yaml>=0.19.1",
     "uvicorn>=0.34",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
