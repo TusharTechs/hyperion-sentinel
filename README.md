@@ -26,6 +26,7 @@
 | **HYPER-AI project** | [hyper-ai-project.eu](https://hyper-ai-project.eu/) |
 | **Live HyperAI IDE** / **tutorial** | [ide.hyperai.di.uoa.gr](https://ide.hyperai.di.uoa.gr/) · [ide-tutorial.hyperai.di.uoa.gr](https://ide-tutorial.hyperai.di.uoa.gr/) |
 | **RAG knowledge base** (official HYPER-AI docs) | [`knowledge/`](knowledge/) |
+| **Demo video** (2 min, recorded live in the real IDE with the real LLM) | [`docs/hyperion-sentinel-demo.mp4`](docs/hyperion-sentinel-demo.mp4) · [subtitles](docs/hyperion-sentinel-demo.srt) |
 | **Architecture diagram** | [`assets/architecture.svg`](assets/architecture.svg) |
 | **Demo workspace** (deliberately imperfect app) | [`demo/hero/`](demo/hero/) |
 | **Run the tests** | `uv run pytest -q` - see [Tests](#tests) |
@@ -145,8 +146,9 @@ hyperion-sentinel/
 ├── knowledge/                 official HYPER-AI docs (.docx sources + cleaned .md used for RAG)
 ├── tests/                     203 tests: API, guardrails, safety, analyzer, remediation, agent, memory
 ├── demo/                      hero workspace, seed_workspace.py, analyze_dir.py
-├── scripts/build_knowledge.py docx → markdown for RAG
-├── assets/                    logo, banner, architecture diagram
+├── scripts/                   build_knowledge.py (docx → md), make_slides.py, record_demo.py, assemble_video.py
+├── assets/                    logo, banner, architecture diagram, slides
+├── docs/                      demo video + subtitles, Taikai and Docker Hub texts
 ├── Dockerfile · docker-compose.yaml · .env.example
 ```
 

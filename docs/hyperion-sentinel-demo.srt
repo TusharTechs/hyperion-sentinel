@@ -1,0 +1,111 @@
+1
+00:00:00,350 --> 00:00:03,062
+Shipping to the edge fails on the basics:
+
+2
+00:00:03,062 --> 00:00:10,670
+images pinned to latest, no resource limits, no health probes, containers running as root, secrets in config files.
+
+3
+00:00:10,670 --> 00:00:17,550
+On constrained nodes, each one means unpredictable behavior, and developers lose hours digging for them.
+
+4
+00:00:18,350 --> 00:00:23,786
+Hyperion Sentinel turns that into one conversation inside the HYPER-AI IDE:
+
+5
+00:00:23,786 --> 00:00:33,280
+it inspects your real workspace, explains with evidence, fixes what's safe, asks before anything risky, and proves the improvement.
+
+6
+00:00:34,080 --> 00:00:35,012
+How it works:
+
+7
+00:00:35,012 --> 00:00:43,112
+deterministic analyzers produce the facts, across Docker, Kubernetes, Compose, and HYPER-AI application profiles.
+
+8
+00:00:43,112 --> 00:00:45,549
+The language model only converses.
+
+9
+00:00:45,549 --> 00:00:49,850
+Every change is an IDE action you confirm, then re-verified.
+
+10
+00:00:52,766 --> 00:00:56,158
+Now live, in the real IDE, with the real Llama model.
+
+11
+00:00:56,158 --> 00:00:59,230
+I ask Hyperion to prepare this app for the edge.
+
+12
+00:00:59,230 --> 00:01:06,846
+It reports an Edge Readiness score of thirty-five out of a hundred, every finding tied to a file, a line, and evidence.
+
+13
+00:01:07,677 --> 00:01:09,443
+What should I fix first?
+
+14
+00:01:09,443 --> 00:01:12,167
+It ranks by impact, and explains why.
+
+15
+00:01:14,555 --> 00:01:16,682
+Fix everything you safely can.
+
+16
+00:01:16,682 --> 00:01:17,179
+A plan:
+
+17
+00:01:17,179 --> 00:01:22,923
+safe changes, changes needing my confirmation, and manual items it never touches.
+
+18
+00:01:22,923 --> 00:01:24,625
+Nothing has changed yet.
+
+19
+00:01:25,466 --> 00:01:26,169
+I confirm.
+
+20
+00:01:26,169 --> 00:01:33,765
+Files are rewritten by IDE actions, the deployment opens in the editor, and Hyperion re-reads the workspace:
+
+21
+00:01:33,765 --> 00:01:35,946
+thirty-five becomes sixty-five.
+
+22
+00:01:37,514 --> 00:01:42,344
+It answers HYPER-AI questions from the official documentation, with sources.
+
+23
+00:01:46,620 --> 00:01:50,430
+Off-topic requests are refused, and no files are touched.
+
+24
+00:01:52,565 --> 00:01:55,105
+And destructive actions always ask first.
+
+25
+00:02:00,800 --> 00:02:02,267
+Hyperion Sentinel:
+
+26
+00:02:02,267 --> 00:02:05,282
+inspect, explain, fix safely, verify.
+
+27
+00:02:05,282 --> 00:02:09,275
+Open source on GitHub, shipped as a Docker image.
+
+28
+00:02:09,275 --> 00:02:10,090
+Thank you.
