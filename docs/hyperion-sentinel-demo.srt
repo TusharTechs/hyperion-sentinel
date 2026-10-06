@@ -1,111 +1,111 @@
 1
-00:00:00,350 --> 00:00:03,021
+00:00:00,350 --> 00:00:03,031
 Shipping to the edge fails on the basics:
 
 2
-00:00:03,021 --> 00:00:10,514
+00:00:03,031 --> 00:00:10,550
 images pinned to latest, no resource limits, no health probes, containers running as root, secrets in config files.
 
 3
-00:00:10,514 --> 00:00:17,290
+00:00:10,550 --> 00:00:17,350
 On constrained nodes, each one means unpredictable behavior, and developers lose hours digging for them.
 
 4
-00:00:18,090 --> 00:00:23,223
+00:00:18,150 --> 00:00:23,385
 Hyperion Sentinel turns that into one conversation inside the HYPER-AI IDE:
 
 5
-00:00:23,223 --> 00:00:32,190
+00:00:23,385 --> 00:00:32,530
 it inspects your real workspace, explains with evidence, fixes what's safe, asks before anything risky, and proves the improvement.
 
 6
-00:00:32,990 --> 00:00:33,918
+00:00:33,330 --> 00:00:34,294
 How it works:
 
 7
-00:00:33,918 --> 00:00:41,982
+00:00:34,294 --> 00:00:42,677
 deterministic analyzers produce the facts, across Docker, Kubernetes, Compose, and HYPER-AI application profiles.
 
 8
-00:00:41,982 --> 00:00:44,408
+00:00:42,677 --> 00:00:45,199
 The language model only converses.
 
 9
-00:00:44,408 --> 00:00:48,690
+00:00:45,199 --> 00:00:49,650
 Every change is an IDE action you confirm, then re-verified.
 
 10
-00:00:51,606 --> 00:00:55,178
+00:00:52,566 --> 00:00:55,936
 Now live, in the real IDE, with the real Llama model.
 
 11
-00:00:55,178 --> 00:00:58,414
+00:00:55,936 --> 00:00:58,988
 I ask Hyperion to prepare this app for the edge.
 
 12
-00:00:58,414 --> 00:01:06,436
+00:00:58,988 --> 00:01:06,556
 It reports an Edge Readiness score of thirty-five out of a hundred, every finding tied to a file, a line, and evidence.
 
 13
-00:01:06,517 --> 00:01:07,976
+00:01:07,477 --> 00:01:09,047
 What should I fix first?
 
 14
-00:01:07,976 --> 00:01:10,227
+00:01:09,047 --> 00:01:11,467
 It ranks by impact, and explains why.
 
 15
-00:01:13,395 --> 00:01:15,594
+00:01:14,355 --> 00:01:16,518
 Fix everything you safely can.
 
 16
-00:01:15,594 --> 00:01:16,107
+00:01:16,518 --> 00:01:17,023
 A plan:
 
 17
-00:01:16,107 --> 00:01:22,045
+00:01:17,023 --> 00:01:22,864
 safe changes, changes needing my confirmation, and manual items it never touches.
 
 18
-00:01:22,045 --> 00:01:23,805
+00:01:22,864 --> 00:01:24,595
 Nothing has changed yet.
 
 19
-00:01:24,306 --> 00:01:25,042
+00:01:25,266 --> 00:01:25,999
 I confirm.
 
 20
-00:01:25,042 --> 00:01:32,993
+00:01:25,999 --> 00:01:33,914
 Files are rewritten by IDE actions, the deployment opens in the editor, and Hyperion re-reads the workspace:
 
 21
-00:01:32,993 --> 00:01:35,276
+00:01:33,914 --> 00:01:36,186
 thirty-five becomes sixty-five.
 
 22
-00:01:36,354 --> 00:01:41,214
+00:01:37,314 --> 00:01:42,154
 It answers HYPER-AI questions from the official documentation, with sources.
 
 23
-00:01:45,460 --> 00:01:48,920
+00:01:46,420 --> 00:01:50,110
 Off-topic requests are refused, and no files are touched.
 
 24
-00:01:51,405 --> 00:01:53,775
+00:01:52,365 --> 00:01:55,015
 And destructive actions always ask first.
 
 25
-00:01:59,640 --> 00:02:00,930
+00:02:00,600 --> 00:02:01,917
 Hyperion Sentinel:
 
 26
-00:02:00,930 --> 00:02:03,582
+00:02:01,917 --> 00:02:04,624
 inspect, explain, fix safely, verify.
 
 27
-00:02:03,582 --> 00:02:07,093
+00:02:04,624 --> 00:02:08,208
 Open source on GitHub, shipped as a Docker image.
 
 28
-00:02:07,093 --> 00:02:07,810
+00:02:08,208 --> 00:02:08,940
 Thank you.
