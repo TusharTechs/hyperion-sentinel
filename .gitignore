@@ -10,3 +10,4 @@ wheels/
 .venv
 .recon/
 ca-bundle.pem
+.env
