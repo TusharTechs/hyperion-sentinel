@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 850" width="1280" height="850" role="img" aria-label="Hyperion Sentinel architecture">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900"><rect width="1600" height="900" fill="#070B16"/><svg x="125" y="0" width="1350" height="900" viewBox="0 0 1280 850" preserveAspectRatio="xMidYMid meet">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#070B16"/><stop offset="1" stop-color="#101A3C"/></linearGradient>
     <linearGradient id="svc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#13224A"/><stop offset="1" stop-color="#0B1330"/></linearGradient>
@@ -86,4 +86,4 @@
 
   <text x="40" y="790" class="s">Non-root container - official docs baked in - no secrets in the image - API key, model and endpoints come from environment variables.</text>
   <text x="40" y="812" class="s">Facts come from the analyzer and the IDE. The LLM explains, answers from retrieved context, and drafts files; it never sets scores or findings.</text>
-</svg>
+</svg></svg>
