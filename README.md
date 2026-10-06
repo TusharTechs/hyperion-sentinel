@@ -26,7 +26,7 @@
 | **HYPER-AI project** | [hyper-ai-project.eu](https://hyper-ai-project.eu/) |
 | **Live HyperAI IDE** / **tutorial** | [ide.hyperai.di.uoa.gr](https://ide.hyperai.di.uoa.gr/) · [ide-tutorial.hyperai.di.uoa.gr](https://ide-tutorial.hyperai.di.uoa.gr/) |
 | **RAG knowledge base** (official HYPER-AI docs) | [`knowledge/`](knowledge/) |
-| **Demo video** (2 min, recorded live in the real IDE with the real LLM) | [`docs/hyperion-sentinel-demo.mp4`](docs/hyperion-sentinel-demo.mp4) · [subtitles](docs/hyperion-sentinel-demo.srt) |
+| **Demo video** (2 min, recorded live in the real IDE with the real LLM) | [YouTube](https://youtu.be/7AZYCdE_vZU) · [mp4 in repo](docs/hyperion-sentinel-demo.mp4) · [subtitles](docs/hyperion-sentinel-demo.srt) |
 | **Architecture diagram** | [`assets/architecture.svg`](assets/architecture.svg) |
 | **Demo workspace** (deliberately imperfect app) | [`demo/hero/`](demo/hero/) |
 | **Run the tests** | `uv run pytest -q` - see [Tests](#tests) |

@@ -20,6 +20,7 @@ Dockerfile, Kubernetes, Docker Compose and **HYPER-AI application profiles** (na
 Python 3.14 · FastAPI · LangChain (OpenAI-compatible, Llama 3.1) · ruamel.yaml · BM25 · Docker (multi-stage, non-root, amd64). **203 automated tests** (API, guardrails, path safety, HITL, every finding type, remediation, memory), verified in the real HYPER-AI IDE and against the live model.
 
 ### Links
+- Demo video (2 min, live in the real IDE): https://youtu.be/7AZYCdE_vZU
 - Code: https://github.com/TusharTechs/hyperion-sentinel
 - Docker image: `tushartechs/hyperion:latest` - https://hub.docker.com/r/tushartechs/hyperion
 - Run: `docker run -p 8000:8000 -e API_KEY=<key> --add-host host.docker.internal:host-gateway tushartechs/hyperion:latest`
