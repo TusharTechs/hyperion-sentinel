@@ -55,9 +55,10 @@ class Snapshot:
     files: dict[str, str] = field(default_factory=dict)
     skipped: list[str] = field(default_factory=list)  # too large / unreadable
     error: str | None = None
+    offline: bool = False  # True when the IDE backend is unreachable and files come from session memory
 
     def copy(self) -> "Snapshot":
-        return Snapshot(dict(self.files), list(self.skipped), self.error)
+        return Snapshot(dict(self.files), list(self.skipped), self.error, self.offline)
 
 
 class WorkspaceError(Exception):

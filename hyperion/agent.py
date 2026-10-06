@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import asyncio
 import difflib
+import json
 import posixpath
 import re
 from typing import AsyncIterator
@@ -41,6 +42,11 @@ HYPER_Q = re.compile(
     r"hyper-?\s?ai|hyperion|open connectors?|device ?nodes?|device controller|application controller|application profiles?|\bapm\b|apmctl|"
     r"continuum|self-?chop|\bdlt\b|swarm|resource model|\bhrm\b|data models?|node models?|\bide\b|\bwp\d\b|\bt4\.\d\b|"
     r"profile (types?|formats?)|native (app|profile)|device (app|profile)", re.I)
+
+NAME_RX = re.compile(r"\b(?:my name is|i am called|call me|i'm called)\s+([A-Za-z][\w'-]{1,30})", re.I)
+SERVICE_RX = re.compile(r"\b(?:my|our|the)\s+(service|app|application|project|api|cluster|team)\s+(?:is\s+)?(?:called|named)\s+[`'\"]?([\w.-]{1,40})", re.I)
+KNOWN_IMAGE_RX = re.compile(r"\b(nginx|redis|postgres|mysql|mongo|httpd|rabbitmq|memcached|eclipse-mosquitto|mosquitto|busybox|kafka|mariadb)(?::[\w.\-]+)?\b", re.I)
+PRONOUN_RX = re.compile(r"\b(it|that file|this file|the file|that one|the same file|same file|the one you (just )?(made|created|wrote))\b", re.I)
 
 INTRO = ("Hi, I'm Hyperion - the assistant for your HYPER-AI workspace. I can:\n"
          "  • answer questions about HYPER-AI (grounded in the official documentation)\n"
@@ -87,10 +93,16 @@ class Hyperion:
         sess = self.store.get(user_id)
         text = (text or "").strip()[:4000]
         out: list[str] = []
+        self._learn(sess, text)
         try:
             async for frame in self._route(sess, text):
                 if frame.startswith('data: {"response"'):
                     out.append(frame)
+                elif frame.startswith('data: {"action"'):
+                    try:
+                        sess.note_action(json.loads(frame[6:]))
+                    except ValueError:
+                        pass
                 yield frame
         except Exception as exc:  # last-resort safety net: never crash the stream
             yield actions.text(f"\nSorry - something went wrong while handling that ({type(exc).__name__}). "
@@ -125,12 +137,19 @@ class Hyperion:
             yield actions.text(INTRO)
             return
 
+        conv = list(self._conversation(sess, text, t))
+        if conv:
+            for f in conv:
+                yield f
+            return
+
         has_ctx = bool(sess.report or sess.pending or sess.changes_log)
         verdict, topic = guard.classify(text, has_ctx)
         # file operations on a path, and bulk-delete requests, are in scope (they get their own safety handling)
         if verdict in ("unsure", "weak") and (
                 (re.search(r"\b(delete|remove|erase|create|edit|update|rename|rm)\b", t) and PATH_RX.search(text)) or
-                (re.search(r"\b(delete|remove|erase|rm)\b", t) and re.search(r"\*|\b(everything|all|whole|entire)\b", t))):
+                (re.search(r"\b(delete|remove|erase|rm)\b", t) and re.search(r"\*|\b(everything|all|whole|entire)\b", t)) or
+                (sess.last_file and re.search(r"\b(delete|remove|erase|edit|update|change|modify|open|show)\b", t) and PRONOUN_RX.search(t))):
             verdict = "in"
         if verdict == "out":
             yield actions.text(guard.refusal(topic))
@@ -154,6 +173,8 @@ class Hyperion:
     async def _intents(self, sess, text, t, verdict) -> AsyncIterator[str]:
         n = len(sess.findings)
         paths = PATH_RX.findall(text)
+        if not paths and sess.last_file and PRONOUN_RX.search(t) and re.search(r"\b(delete|remove|erase|trash|edit|update|change|modify|rewrite|set|add|increase|decrease|bump)\b", t):
+            paths = [sess.last_file]
         if re.search(r"\bwhat (did|have|has) you (change|changed|modif\w+|do|done)\b|\bwhat (changed|was changed|has changed)\b|"
                      r"\b(summari[sz]e|show|list) (me )?(the )?(changes|diff|modifications)\b|\bwhy did you change\b|\bwhat did you (do|fix)\b", t):
             for f in self._what_changed(sess):
@@ -210,6 +231,63 @@ class Hyperion:
                 yield f
             return
 
+    # ------------------------------------------------------------------ conversation memory
+    def _learn(self, sess: Session, text: str):
+        if m := NAME_RX.search(text):
+            sess.facts["name"] = m.group(1)
+        if m := SERVICE_RX.search(text):
+            sess.facts[m.group(1).lower()] = m.group(2)
+        if m := KNOWN_IMAGE_RX.search(text):
+            sess.last_image = m.group(0).lower()
+        elif m := re.search(r"\bimage\s+([a-z0-9][\w.\-/]*(?::[\w.\-]+)?)", text, re.I):
+            sess.last_image = m.group(1)
+
+    def _conversation(self, sess: Session, text: str, t: str):
+        """Small-talk memory: user facts, recall questions, and 'what file did you …'. Always in scope."""
+        user_msgs = [m["content"] for m in sess.history if m["role"] == "user"]
+        if re.search(r"\bwhat('?s| is| was) my name\b|\bdo you (remember|know) my name\b|\bwho am i\b", t):
+            n = sess.facts.get("name")
+            yield actions.text(f"Your name is {n}." if n else "You haven't told me your name yet.")
+        elif m := re.search(r"\bwhat('?s| is| was) my (service|app|application|project|api|cluster|team)(?: called| named)?\b|"
+                            r"\bwhat did i (?:call|name) (?:my|the) (service|app|application|project|api|cluster|team)\b", t):
+            kind = next(g for g in m.groups()[1:] if g) if m.lastindex else "service"
+            v = sess.facts.get(kind.lower())
+            yield actions.text(f"Your {kind} is called {v}." if v else f"You haven't told me what your {kind} is called.")
+        elif re.search(r"\bwhat (did|was) (i|my)\b.*\b(ask|say|said|tell|told|(last|previous|first) (question|message))\b|"
+                       r"\bwhat was my (last|previous|first) (question|message)\b|\brepeat my (last|previous) (question|message)\b", t):
+            if re.search(r"\bfirst\b", t):
+                prev = user_msgs[0] if user_msgs else None
+            else:
+                prev = user_msgs[-1] if user_msgs else None
+            yield actions.text(f"You asked: \"{prev[:300]}\"" if prev else "This is the start of our conversation - you haven't asked anything yet.")
+        elif re.search(r"\bwhat (file|files) (did|have) you\b|\bwhich file (did|have) you\b|\bwhat did you (just )?(create|make|write|edit|delete)\b", t):
+            if sess.last_file:
+                yield actions.text(f"The last file I created or edited is {sess.last_file}.")
+            elif sess.changes_log:
+                yield from self._what_changed(sess)
+            else:
+                yield actions.text("I haven't created or edited any files in this conversation yet.")
+        elif re.search(r"\b(what did we (talk|discuss)|summari[sz]e (our|this) (conversation|chat)|recap)\b", t):
+            if not user_msgs:
+                yield actions.text("We've only just started - nothing to recap yet.")
+            else:
+                yield actions.text("So far you've asked me: " + "; ".join(f"\"{m[:80]}\"" for m in user_msgs[-6:]) + ".")
+        elif (NAME_RX.search(text) or SERVICE_RX.search(text)) and not re.search(r"\?|\b(create|make|delete|fix|analy[sz]e)\b", t):
+            bits = []
+            if sess.facts.get("name"):
+                bits.append(f"your name is {sess.facts['name']}")
+            for k in ("service", "app", "application", "project", "api", "cluster", "team"):
+                if sess.facts.get(k) and SERVICE_RX.search(text):
+                    bits.append(f"your {k} is called {sess.facts[k]}")
+            yield actions.text("Got it - I'll remember that " + " and ".join(bits[:2]) + ". How can I help with your HYPER-AI workspace?")
+
+    async def _snap(self, sess: Session) -> Snapshot:
+        """Workspace snapshot; when the IDE backend is unreachable fall back to the files Hyperion wrote this session."""
+        snap = await self.ws.snapshot()
+        if snap.error:
+            return Snapshot(dict(sess.known_files), [], None, True)
+        return snap
+
     # ------------------------------------------------------------------ workspace helpers
     async def _snapshot(self) -> Snapshot:
         return await self.ws.snapshot()
@@ -224,6 +302,9 @@ class Hyperion:
     async def _analyze(self, sess: Session, announce: bool = False) -> AsyncIterator[str]:
         yield actions.text("Inspecting your workspace through the IDE… ")
         snap = await self._snapshot()
+        if snap.error and sess.known_files:
+            yield actions.text(f"\n\n(I can't reach the IDE backend, so I'm analyzing only the {len(sess.known_files)} file(s) I wrote in this conversation.)")
+            snap = Snapshot(dict(sess.known_files), [], None, True)
         if snap.error:
             yield actions.text(f"\n\nI couldn't read the workspace: {snap.error}. Is the IDE backend running? "
                                "Nothing was changed.")
@@ -425,10 +506,7 @@ class Hyperion:
         if len(targets) > 3:
             yield actions.text("That's more than 3 files - to avoid accidents I'll only delete up to 3 at a time. Which ones first?")
             return
-        snap = await self._snapshot()
-        if snap.error:
-            yield actions.text(f"I couldn't read the workspace ({snap.error}), so I won't delete anything.")
-            return
+        snap = await self._snap(sess)
         resolved, problems = [], []
         for raw in targets:
             try:
@@ -438,7 +516,9 @@ class Hyperion:
                 continue
             if kind == "folder":
                 inside = [f for f in snap.files if f.startswith(p + "/")]
-                if not inside:
+                if not inside and snap.offline:
+                    resolved.append((p, []))
+                elif not inside:
                     problems.append(f"'{p}' isn't a folder with files in the workspace")
                 else:
                     resolved.append((p, inside))
@@ -451,6 +531,8 @@ class Hyperion:
                 resolved.append((matches[0], []))
             elif len(matches) > 1:
                 problems.append(f"'{p}' matches several files ({', '.join(matches)}) - use the full path")
+            elif snap.offline:
+                resolved.append((p, []))  # can't verify (IDE backend unreachable): still ask first, the IDE will ignore a missing file
             else:
                 problems.append(f"'{p}' isn't in the workspace")
         if problems:
@@ -458,12 +540,13 @@ class Hyperion:
             return
         sess.pending = {"type": "delete", "kind": kind, "paths": [p for p, _ in resolved], "age": 0}
         desc = "\n".join(f"  ✗ {p}" + (f" (and {len(inside)} file(s) inside it)" if inside else "") for p, inside in resolved)
-        yield actions.text(f"This will permanently delete:\n{desc}\n\nDeletion can't be undone from here. Reply \"yes\" to confirm or \"no\" to cancel.")
+        note = "\n(I can't reach the IDE workspace right now, so I can't verify the file exists.)" if snap.offline else ""
+        yield actions.text(f"This will permanently delete:\n{desc}{note}\n\nDeletion can't be undone from here. Reply \"yes\" to confirm or \"no\" to cancel.")
 
     async def _do_delete(self, sess: Session, p: dict) -> AsyncIterator[str]:
-        snap = await self._snapshot()
+        snap = await self._snap(sess)
         for path in p["paths"]:
-            exists = path in snap.files or any(f.startswith(path + "/") for f in snap.files)
+            exists = snap.offline or path in snap.files or any(f.startswith(path + "/") for f in snap.files)
             if not exists:
                 yield actions.text(f"{path} is already gone - skipped.\n")
                 continue
@@ -482,6 +565,10 @@ class Hyperion:
             re.search(r"\bimage\s+([a-z0-9][\w.\-/]*(?::[\w.\-]+)?)", t) or \
             re.search(r"\b(nginx|redis|postgres|mysql|mongo|httpd|rabbitmq|memcached|eclipse-mosquitto|busybox)\b(?::[\w.\-]+)?", t)
         image = m.group(1) if m else None
+        if image is None and sess.last_image and re.search(r"\b(it|that|same|those)\b", t):
+            image = sess.last_image
+        if image is None and sess.last_image and re.search(r"\b(deployment|compose|manifest)\b", t):
+            image = sess.last_image
         want = "compose" if re.search(r"compose", t) else "dockerfile" if re.search(r"dockerfile", t) else \
             "k8s" if re.search(r"deployment|kubernetes|k8s|manifest|service|ya?ml", t) else "other"
         path = paths[0] if paths else {"compose": "docker-compose.yaml", "dockerfile": "Dockerfile", "k8s": "deployment.yaml"}.get(want)
@@ -512,7 +599,7 @@ class Hyperion:
             if err or not docs:
                 yield actions.text(f"The generated YAML didn't parse ({err[1] if err else 'empty'}), so I didn't write it. Try rephrasing, or give me more detail.")
                 return
-        snap = await self._snapshot()
+        snap = await self._snap(sess)
         if path in snap.files:
             sess.pending = {"type": "write", "path": path, "content": content, "action": "edit", "age": 0}
             yield actions.text(f"{path} already exists. Creating it again would overwrite the current contents.\n\nProposed changes:\n{_diff(snap.files[path], content)}\n\n"
@@ -540,10 +627,9 @@ class Hyperion:
         except PathError as exc:
             yield actions.text(f"I can't edit that path: {exc}. Nothing was changed.")
             return
-        snap = await self._snapshot()
-        if snap.error:
-            yield actions.text(f"I couldn't read the workspace ({snap.error}), so I made no changes.")
-            return
+        snap = await self._snap(sess)
+        if path not in snap.files and snap.offline:
+            snap.files[path] = ""  # IDE backend unreachable: edit blind, but still diff + confirm before overwriting
         if path not in snap.files:
             matches = [f for f in snap.files if posixpath.basename(f) == path]
             if len(matches) == 1:

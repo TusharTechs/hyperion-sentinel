@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 850" width="1280" height="850" role="img" aria-label="Hyperion Sentinel architecture">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#070B16"/><stop offset="1" stop-color="#101A3C"/></linearGradient>
+    <linearGradient id="svc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#13224A"/><stop offset="1" stop-color="#0B1330"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#5EEAD4" stroke-opacity=".05"/></pattern>
+    <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#93C5FD"/></marker>
+    <marker id="arT" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5EEAD4"/></marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#FCD34D"/></marker>
+    <marker id="arP" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#F472B6"/></marker>
+  </defs>
+  <style>
+    text{font-family:'Inter','SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif}
+    .t{font-size:17px;font-weight:700;fill:#E2E8F0}.s{font-size:13px;fill:#94A3B8}.h{font-size:12px;font-weight:700;letter-spacing:1.6px;fill:#64748B}
+    .box{fill:#0E1A3A;stroke-width:1.6}.lab{font-size:13px;font-weight:600}
+  </style>
+  <rect width="1280" height="850" rx="22" fill="url(#bg)"/><rect width="1280" height="850" rx="22" fill="url(#grid)"/>
+  <text x="40" y="52" font-size="26" font-weight="800" fill="#E2E8F0">Hyperion Sentinel - architecture</text>
+  <text x="40" y="76" class="s">Deterministic tools produce the facts; the LLM only converses. Every state change is a streamed IDE action, gated by confirmation.</text>
+
+  <!-- IDE -->
+  <rect x="40" y="150" width="250" height="330" rx="16" fill="#0E1A3A" stroke="#93C5FD" stroke-opacity=".6" stroke-width="1.6"/>
+  <text x="62" y="182" class="h">HYPERAI IDE (BROWSER)</text>
+  <rect x="62" y="200" width="206" height="78" rx="10" fill="#142252" stroke="#93C5FD" stroke-opacity=".4"/>
+  <text x="76" y="226" class="t" font-size="15">Hyperion chat panel</text><text x="76" y="248" class="s">sends {user_id, text}</text><text x="76" y="266" class="s">renders SSE text</text>
+  <rect x="62" y="294" width="206" height="78" rx="10" fill="#142252" stroke="#93C5FD" stroke-opacity=".4"/>
+  <text x="76" y="320" class="t" font-size="15">Explorer + YAML editor</text><text x="76" y="342" class="s">executes IDE actions</text><text x="76" y="360" class="s">opens created/edited files</text>
+  <rect x="62" y="388" width="206" height="70" rx="10" fill="#142252" stroke="#93C5FD" stroke-opacity=".4"/>
+  <text x="76" y="414" class="t" font-size="15">Profile validator</text><text x="76" y="436" class="s">native + device profiles</text>
+
+  <!-- service -->
+  <rect x="350" y="130" width="640" height="480" rx="18" fill="url(#svc)" stroke="#5EEAD4" stroke-opacity=".55" stroke-width="2"/>
+  <text x="376" y="162" class="h" style="fill:#5EEAD4">HYPERION SENTINEL SERVICE - FASTAPI :8000 - DOCKER</text>
+
+  <rect x="376" y="182" width="170" height="84" rx="12" class="box" stroke="#5EEAD4"/>
+  <text x="392" y="210" class="t">POST /chat</text><text x="392" y="232" class="s">SSE stream, CORS on</text><text x="392" y="250" class="s">malformed = 422</text>
+  <rect x="580" y="182" width="190" height="84" rx="12" class="box" stroke="#F87171"/>
+  <text x="596" y="210" class="t">Guardrails</text><text x="596" y="232" class="s">scope + injection rules</text><text x="596" y="250" class="s">LLM check fails closed</text>
+  <rect x="804" y="182" width="162" height="84" rx="12" class="box" stroke="#C4B5FD"/>
+  <text x="820" y="210" class="t">Intent router</text><text x="820" y="232" class="s">analyze - fix - ask</text><text x="820" y="250" class="s">create - edit - delete</text>
+  <path d="M546 224H578" stroke="#93C5FD" stroke-width="2" marker-end="url(#ar)"/><path d="M770 224H802" stroke="#93C5FD" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="376" y="304" width="270" height="150" rx="12" class="box" stroke="#5EEAD4"/>
+  <text x="392" y="332" class="t" style="fill:#5EEAD4">Sentinel analyzer</text>
+  <text x="392" y="356" class="s">Dockerfile - Kubernetes - Compose</text><text x="392" y="374" class="s">HYPER-AI native + device profiles</text><text x="392" y="392" class="s">deps - secrets (redacted) - config</text>
+  <text x="392" y="420" class="lab" style="fill:#99F6E4">findings + score 0-100</text><text x="392" y="438" class="s">deterministic, evidence-backed</text>
+  <rect x="676" y="304" width="290" height="150" rx="12" class="box" stroke="#FCD34D"/>
+  <text x="692" y="332" class="t" style="fill:#FCD34D">Remediation + HITL gate</text>
+  <text x="692" y="356" class="s">SAFE / CONFIRM / MANUAL plan</text><text x="692" y="374" class="s">comment-preserving YAML edits</text><text x="692" y="392" class="s">confirm before delete / overwrite</text>
+  <text x="692" y="420" class="lab" style="fill:#FDE68A">apply - verify - re-analyze</text><text x="692" y="438" class="s">before/after score from the IDE</text>
+  <path d="M885 266V304" stroke="#93C5FD" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M885 266 V285 H511 V304" fill="none" stroke="#93C5FD" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="376" y="486" width="196" height="104" rx="12" class="box" stroke="#93C5FD"/>
+  <text x="392" y="514" class="t">RAG</text><text x="392" y="536" class="s">BM25 over HYPER-AI docs</text><text x="392" y="554" class="s">cited sources, no guessing</text><text x="392" y="572" class="s">works offline</text>
+  <rect x="598" y="486" width="196" height="104" rx="12" class="box" stroke="#C4B5FD"/>
+  <text x="614" y="514" class="t">Session memory</text><text x="614" y="536" class="s">keyed by IDE user_id</text><text x="614" y="554" class="s">history - findings - plan</text><text x="614" y="572" class="s">pending confirm - bounded</text>
+  <rect x="820" y="486" width="146" height="104" rx="12" class="box" stroke="#94A3B8" stroke-dasharray="5 4"/>
+  <text x="836" y="514" class="t">LLM client</text><text x="836" y="536" class="s">OpenAI-compatible</text><text x="836" y="554" class="s">llama3.1 - API_KEY</text><text x="836" y="572" class="s">from env</text>
+
+  <!-- ide-backend -->
+  <rect x="1050" y="150" width="200" height="200" rx="16" fill="#0E1A3A" stroke="#5EEAD4" stroke-opacity=".6" stroke-width="1.6"/>
+  <text x="1070" y="182" class="h">IDE-BACKEND :3001</text>
+  <text x="1070" y="210" class="t" font-size="15">Workspace files</text><text x="1070" y="232" class="s">GET /files, /file</text><text x="1070" y="250" class="s">POST /file, /file/create</text><text x="1070" y="268" class="s">DELETE /delete</text><text x="1070" y="292" class="s">/agent/validation/file</text><text x="1070" y="316" class="s">profiles - Dockerfile - YAML</text>
+
+  <!-- docs + LLM server under the service -->
+  <rect x="376" y="660" width="196" height="84" rx="14" fill="#0E1A3A" stroke="#FCD34D" stroke-opacity=".6" stroke-width="1.6"/>
+  <text x="394" y="688" class="h">OFFICIAL HYPER-AI DOCS</text><text x="394" y="712" class="s">6 deliverables + IDE notes</text><text x="394" y="730" class="s">baked into the image</text>
+  <rect x="800" y="660" width="186" height="84" rx="14" fill="#0E1A3A" stroke="#94A3B8" stroke-opacity=".7" stroke-width="1.6" stroke-dasharray="6 5"/>
+  <text x="818" y="688" class="h">LLM SERVER</text><text x="818" y="712" class="s">Llama 3.1 8B (team key)</text><text x="818" y="730" class="s">legion1.di.uoa.gr/v1</text>
+  <path d="M474 660V590" stroke="#FCD34D" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arA)"/>
+  <path d="M893 660V590" stroke="#94A3B8" stroke-width="2" stroke-dasharray="5 4" marker-start="url(#ar)" marker-end="url(#ar)"/>
+
+  <!-- flows -->
+  <path d="M290 224 H376" fill="none" stroke="#93C5FD" stroke-width="2.4" marker-end="url(#ar)"/>
+  <text x="300" y="214" class="lab" style="fill:#93C5FD">POST</text>
+  <path d="M350 360 H165 V480" fill="none" stroke="#5EEAD4" stroke-width="2.4" marker-end="url(#arT)" opacity="0"/>
+  <path d="M376 610 V640 H165 V484" fill="none" stroke="#5EEAD4" stroke-width="2.4" marker-end="url(#arT)" opacity="0"/>
+  <path d="M350 330 H315 V300 H290" fill="none" stroke="#5EEAD4" stroke-width="2.4" marker-end="url(#arT)" opacity="0"/>
+  <path d="M350 576 H165 V484" fill="none" stroke="#5EEAD4" stroke-width="2.4" marker-end="url(#arT)"/>
+  <text x="62" y="522" class="lab" style="fill:#5EEAD4">SSE: text + IDE actions</text>
+  <text x="62" y="542" class="s">create_file - edit_file - delete_file</text>
+  <path d="M966 250 H1050" stroke="#5EEAD4" stroke-width="2" marker-start="url(#arT)" marker-end="url(#arT)"/>
+  <text x="978" y="240" class="lab" style="fill:#5EEAD4">read</text>
+  <path d="M165 150 V104 H1150 V150" fill="none" stroke="#F472B6" stroke-width="2" stroke-dasharray="4 5" marker-end="url(#arP)"/>
+  <text x="640" y="96" text-anchor="middle" class="lab" style="fill:#F9A8D4">the IDE executes each action and writes through ide-backend (create / edit / delete, then opens the file)</text>
+
+  <text x="40" y="790" class="s">Non-root container - official docs baked in - no secrets in the image - API key, model and endpoints come from environment variables.</text>
+  <text x="40" y="812" class="s">Facts come from the analyzer and the IDE. The LLM explains, answers from retrieved context, and drafts files; it never sets scores or findings.</text>
+</svg>

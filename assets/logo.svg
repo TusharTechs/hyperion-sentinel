@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Hyperion Sentinel logo">
+  <defs>
+    <linearGradient id="sh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1B2A4E"/><stop offset="1" stop-color="#0A1020"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5EEAD4"/><stop offset="1" stop-color="#6366F1"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FDE68A"/><stop offset="1" stop-color="#F59E0B"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <path d="M64 7 L113 25 V62 C113 91 92 111 64 121 C36 111 15 91 15 62 V25 Z" fill="url(#sh)" stroke="url(#rim)" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M64 15 L105 30 V62 C105 86 88 103 64 112 C40 103 23 86 23 62 V30 Z" fill="none" stroke="#5EEAD4" stroke-opacity=".18" stroke-width="1.5"/>
+  <!-- Hyperion: titan of light -->
+  <g filter="url(#glow)" stroke="#FBBF24" stroke-width="3.2" stroke-linecap="round">
+    <line x1="64" y1="21" x2="64" y2="28"/><line x1="64" y1="64" x2="64" y2="57" opacity="0"/>
+    <line x1="43" y1="30" x2="48" y2="35"/><line x1="85" y1="30" x2="80" y2="35"/>
+    <line x1="34" y1="49" x2="41" y2="49"/><line x1="94" y1="49" x2="87" y2="49"/>
+    <line x1="43" y1="68" x2="48" y2="63"/><line x1="85" y1="68" x2="80" y2="63"/>
+  </g>
+  <circle cx="64" cy="49" r="13.5" fill="url(#sun)" filter="url(#glow)"/>
+  <!-- horizon + readiness check -->
+  <path d="M30 78 H98" stroke="#5EEAD4" stroke-opacity=".35" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 6"/>
+  <path d="M44 90 L57 103 L84 76" fill="none" stroke="#5EEAD4" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+</svg>
