@@ -47,7 +47,7 @@ async def test_create_via_llm_validates_yaml(chat, fake_llm, monkeypatch):
     monkeypatch.setattr("hyperion.config.API_KEY", "k")
     fake_llm.state["reply"] = "```yaml\nfoo: [unclosed\nbar: : :\n```"
     r = await chat.say("create a file named config.yaml with some settings for my app")
-    assert chat.actions == [] and "didn't parse" in r
+    assert chat.actions == [] and "valid config.yaml" in r
     fake_llm.state["reply"] = "```yaml\nname: demo\nport: 80\n```"
     await chat.say("create a file named config.yaml with some settings for my app")
     assert chat.actions and chat.actions[0]["path"] == "config.yaml"
@@ -183,3 +183,28 @@ async def test_reports_never_claim_unsupported_things(chat):
     r = await chat.say("Prepare this application for edge deployment.")
     assert "certif" not in r.lower().replace("not an official", "") or "not" in r
     assert "deployed to" not in r.lower()
+
+
+async def test_llm_dockerfile_must_start_with_from(chat, fake_llm, monkeypatch):
+    monkeypatch.setattr("hyperion.config.API_KEY", "k")
+    fake_llm.state["reply"] = "Sure! Here is how you do it: first install python then run the app."
+    r = await chat.say("Create a Dockerfile for a small flask app")
+    assert chat.actions == [] and "valid Dockerfile" in r and len(fake_llm.calls) == 2  # retried once
+
+
+async def test_llm_draft_gets_sentinel_self_check(chat, ide, fake_llm, monkeypatch):
+    monkeypatch.setattr("hyperion.config.API_KEY", "k")
+    ide.files.clear()
+    fake_llm.state["reply"] = "```dockerfile\nFROM python:latest\nRUN pip install flask\nCMD ['python','app.py']\n```"
+    r = await chat.say("Create a Dockerfile for a small flask app")
+    content = chat.actions[0]["content"]
+    assert "python:3.12-slim" in content and "--no-cache-dir" in content and "Sentinel self-check" in r
+
+
+async def test_delete_it_never_resolves_to_same_named_file_elsewhere(chat, ide):
+    # root deployment.yaml was just created by Hyperion but the IDE has not listed it yet; demo-style duplicate exists elsewhere
+    ide.files = {"other/deployment.yaml": "a: 1\n"}
+    sess = chat.agent.store.get("user-1")
+    sess.known_files["deployment.yaml"] = "x: 1\n"; sess.last_file = "deployment.yaml"
+    r = await chat.say("delete it")
+    assert "✗ deployment.yaml" in r and "other/" not in r

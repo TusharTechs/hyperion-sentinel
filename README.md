@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img alt="tests" src="https://img.shields.io/badge/tests-200%20passing-5EEAD4?style=flat-square&labelColor=0E1736">
+  <img alt="tests" src="https://img.shields.io/badge/tests-203%20passing-5EEAD4?style=flat-square&labelColor=0E1736">
   <img alt="python" src="https://img.shields.io/badge/python-3.14-93C5FD?style=flat-square&labelColor=0E1736">
   <img alt="docker" src="https://img.shields.io/badge/docker-amd64%20%C2%B7%20non--root-C4B5FD?style=flat-square&labelColor=0E1736">
   <img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-FCD34D?style=flat-square&labelColor=0E1736">
@@ -143,7 +143,7 @@ hyperion-sentinel/
 │   ├── config.py              environment configuration
 │   └── analyzer/              engine + rules: docker, k8s, compose, profile, deps, config
 ├── knowledge/                 official HYPER-AI docs (.docx sources + cleaned .md used for RAG)
-├── tests/                     200 tests: API, guardrails, safety, analyzer, remediation, agent, memory
+├── tests/                     203 tests: API, guardrails, safety, analyzer, remediation, agent, memory
 ├── demo/                      hero workspace, seed_workspace.py, analyze_dir.py
 ├── scripts/build_knowledge.py docx → markdown for RAG
 ├── assets/                    logo, banner, architecture diagram
@@ -196,7 +196,7 @@ Multi-stage, **non-root** (uid 10001), `HEALTHCHECK`, listens on `0.0.0.0:8000`,
 ## Tests
 
 ```bash
-uv run pytest -q      # 200 tests
+uv run pytest -q      # 203 tests
 ```
 
 They run the whole agent against a simulated IDE (`tests/conftest.py: FakeIDE`) that executes SSE actions like the real IDE, including a laggy mode and an unreachable-backend mode. LLM calls are faked. Coverage: valid / malformed / missing-field requests, SSE framing, LLM failure and timeout, off-topic and injection prompts, path traversal, malformed YAML, large files, empty workspace, every finding type, remediation idempotence, HITL (confirm / cancel / mass-delete refusal), "fix the second issue", "what did you change?", and name/file memory.
