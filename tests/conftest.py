@@ -88,8 +88,9 @@ class Chat:
 
 @pytest.fixture(autouse=True)
 def no_llm(monkeypatch):
-    """By default the LLM is unreachable; tests opt in with the `fake_llm` fixture."""
+    """By default the LLM is unreachable; tests opt in with the `fake_llm` fixture. Embeddings never hit the network in tests."""
     monkeypatch.setattr("hyperion.config.API_KEY", "")
+    monkeypatch.setenv("EMBED_DISABLED", "1")
 
 
 @pytest.fixture

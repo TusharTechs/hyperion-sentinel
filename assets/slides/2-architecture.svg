@@ -51,7 +51,7 @@
   <path d="M885 266 V285 H511 V304" fill="none" stroke="#93C5FD" stroke-width="2" marker-end="url(#ar)"/>
 
   <rect x="376" y="486" width="196" height="104" rx="12" class="box" stroke="#93C5FD"/>
-  <text x="392" y="514" class="t">RAG</text><text x="392" y="536" class="s">BM25 over HYPER-AI docs</text><text x="392" y="554" class="s">cited sources, no guessing</text><text x="392" y="572" class="s">works offline</text>
+  <text x="392" y="514" class="t">RAG</text><text x="392" y="536" class="s">hybrid BM25 + vectors, docs</text><text x="392" y="554" class="s">cited sources, no guessing</text><text x="392" y="572" class="s">works offline</text>
   <rect x="598" y="486" width="196" height="104" rx="12" class="box" stroke="#C4B5FD"/>
   <text x="614" y="514" class="t">Session memory</text><text x="614" y="536" class="s">keyed by IDE user_id</text><text x="614" y="554" class="s">history - findings - plan</text><text x="614" y="572" class="s">pending confirm - bounded</text>
   <rect x="820" y="486" width="146" height="104" rx="12" class="box" stroke="#94A3B8" stroke-dasharray="5 4"/>
@@ -64,7 +64,7 @@
 
   <!-- docs + LLM server under the service -->
   <rect x="376" y="660" width="196" height="84" rx="14" fill="#0E1A3A" stroke="#FCD34D" stroke-opacity=".6" stroke-width="1.6"/>
-  <text x="394" y="688" class="h">OFFICIAL DOCS</text><text x="394" y="712" class="s">6 deliverables + IDE notes</text><text x="394" y="730" class="s">baked into the image</text>
+  <text x="394" y="688" class="h">OFFICIAL DOCS</text><text x="394" y="712" class="s">6 deliverables + IDE tutorial</text><text x="394" y="730" class="s">baked into the image</text>
   <rect x="800" y="660" width="186" height="84" rx="14" fill="#0E1A3A" stroke="#94A3B8" stroke-opacity=".7" stroke-width="1.6" stroke-dasharray="6 5"/>
   <text x="818" y="688" class="h">LLM SERVER</text><text x="818" y="712" class="s">Llama 3.1 8B (team key)</text><text x="818" y="730" class="s">legion1.di.uoa.gr/v1</text>
   <path d="M474 660V590" stroke="#FCD34D" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arA)"/>

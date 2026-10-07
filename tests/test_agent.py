@@ -8,7 +8,7 @@ async def test_hyperai_question_is_grounded_and_cites_sources(chat, fake_llm, mo
     r = await chat.say("What is HyperAI?")
     assert "hyper-distributed" in r and "Sources:" in r
     sys_prompt = fake_llm.calls[-1][0]["content"]
-    assert "CONTEXT" in sys_prompt and "[Source:" in sys_prompt and "self-managed" in sys_prompt
+    assert "CONTEXT" in sys_prompt and "[Source:" in sys_prompt and "HYPER-AI" in sys_prompt
 
 
 async def test_unanswerable_hyperai_question_admits_it(chat, fake_llm, monkeypatch):
@@ -208,3 +208,55 @@ async def test_delete_it_never_resolves_to_same_named_file_elsewhere(chat, ide):
     sess.known_files["deployment.yaml"] = "x: 1\n"; sess.last_file = "deployment.yaml"
     r = await chat.say("delete it")
     assert "✗ deployment.yaml" in r and "other/" not in r
+
+
+async def test_ide_usage_question_uses_the_official_tutorial(chat, fake_llm, monkeypatch):
+    monkeypatch.setattr("hyperion.config.API_KEY", "k")
+    fake_llm.state["reply"] = "Click Deploy, choose the workflow, then Start it on the Dashboard."
+    r = await chat.say("How do I deploy my first web server in the IDE?")
+    ctx = fake_llm.calls[-1][0]["content"]
+    assert "Quick Start Demo" in ctx and "Deploy" in ctx and "Sources:" in r and "HyperAI IDE tutorial" in r
+
+
+async def test_tutorial_registry_question(chat, fake_llm, monkeypatch):
+    monkeypatch.setattr("hyperion.config.API_KEY", "k")
+    await chat.say("Which registry must my container image be in for HyperAI?")
+    assert "whitelisted registry" in fake_llm.calls[-1][0]["content"]
+
+
+async def test_actions_question_uses_hyperion_actions_doc(chat, fake_llm, monkeypatch):
+    monkeypatch.setattr("hyperion.config.API_KEY", "k")
+    await chat.say("What actions can Hyperion send to the IDE?")
+    assert "create_file" in fake_llm.calls[-1][0]["content"] and "Hyperion Actions" in fake_llm.calls[-1][0]["content"]
+
+
+async def test_generic_kubernetes_question_not_hijacked_by_docs(chat, fake_llm, monkeypatch):
+    monkeypatch.setattr("hyperion.config.API_KEY", "k")
+    await chat.say("How do Kubernetes readiness probes work?")
+    assert "CONTEXT" not in fake_llm.calls[-1][0]["content"]
+
+
+async def test_required_fields_answer_is_deterministic_and_complete(chat):
+    r = await chat.say("What are the required fields in a native application profile?")
+    for f in ("metadata: type, schemaVersion, name, version, owner, lifecyclePhase", "executionType", "entryPoint", "containerImage.uri", "cpu, memory, storage", "supportedArchitectures"):
+        assert f in r, f
+    assert "Source: HyperAI IDE tutorial > Defining Native Applications" in r
+
+
+async def test_required_fields_device(chat):
+    r = await chat.say("Which fields are mandatory in a device application profile?")
+    assert "apiVersion, kind, metadata, spec" in r and "esp32Binary.chip" in r and "Defining Device Node Applications" in r
+
+
+async def test_comparison_question_retrieves_both_sides(chat, fake_llm, monkeypatch):
+    monkeypatch.setattr("hyperion.config.API_KEY", "k")
+    await chat.say("What is the difference between native and device applications?")
+    ctx = fake_llm.calls[-1][0]["content"]
+    assert "Defining Native Applications" in ctx and "Defining Device Node Applications" in ctx
+
+
+async def test_sources_line_not_duplicated_when_model_adds_its_own(chat, fake_llm, monkeypatch):
+    monkeypatch.setattr("hyperion.config.API_KEY", "k")
+    fake_llm.state["reply"] = "Native apps use profiles.\n\nSources: HyperAI IDE tutorial"
+    r = await chat.say("What is the difference between native and device applications?")
+    assert r.count("Sources:") == 1

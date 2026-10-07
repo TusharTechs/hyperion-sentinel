@@ -14,3 +14,4 @@ scripts/
 knowledge/*.docx
 README.md
 docker-compose.yaml
+knowledge/_incoming/

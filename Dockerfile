@@ -16,7 +16,7 @@ COPY --from=deps /app/.venv /app/.venv
 # Application code + the official HYPER-AI documentation used for RAG (no internet needed at runtime).
 COPY main.py helpers.py ./
 COPY hyperion/ ./hyperion/
-COPY knowledge/*.md ./knowledge/
+COPY knowledge/*.md knowledge/embeddings.json ./knowledge/
 
 # Run as an unprivileged user.
 RUN useradd --system --uid 10001 --no-create-home hyperion

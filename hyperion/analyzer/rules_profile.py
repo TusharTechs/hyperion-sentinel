@@ -43,6 +43,28 @@ def _dig(node, *keys):
     return node
 
 
+DOCKER_HUB_HOSTS = {"docker.io", "index.docker.io", "registry-1.docker.io", "registry.hub.docker.com"}
+
+
+def registry_host(ref: str) -> str | None:
+    """Registry host of an image reference, or None for Docker Hub short names (`nginx`, `user/app`)."""
+    first = str(ref).split("/", 1)[0] if "/" in str(ref) else ""
+    if first and ("." in first or ":" in first or first == "localhost"):
+        return first.lower()
+    return None
+
+
+def registry_finding(path, name, ref, line, target):
+    host = registry_host(ref)
+    if host is None or host in DOCKER_HUB_HOSTS:
+        return None
+    return mk("PROF-REGISTRY", "LOW", "hyperai-profile", path, f"Profile `{name}` image comes from `{host}`, which may not be a whitelisted registry",
+              f"line {line}: image {ref}",
+              "The HyperAI tutorial requires the container to be in a public registry whitelisted by HyperAI (for example Docker Hub); an image elsewhere may fail to deploy.",
+              "Publish the image to a public whitelisted registry such as Docker Hub (or confirm with the platform team that this one is whitelisted).",
+              MANUAL_ONLY, line=line, target=target)
+
+
 def analyze_profile(path: str, doc, kind: str):
     out = []
     root = doc.get("applicationProfile") if kind == "native" and "applicationProfile" in doc else doc
@@ -66,6 +88,10 @@ def analyze_profile(path: str, doc, kind: str):
                               "Set containerImage.tag to a specific version" + (f" (e.g. {sug.rsplit(':', 1)[1]})." if sug else "."),
                               SAFE_AUTO if sug and "tag" in ci else MANUAL_ONLY, line=line_of(ci, "tag") or line_of(ci),
                               target=f"{name}:image", tag=sug.rsplit(":", 1)[1] if sug else None))
+        if ci and str(ci.get("uri", "")):
+            rf = registry_finding(path, name, str(ci.get("uri")), line_of(ci, "uri") or line_of(ci), f"{name}:registry")
+            if rf:
+                out.append(rf)
         res = specs.get("resources") if is_map(specs.get("resources")) else (
             root.get("resources") if is_map(root.get("resources")) else {})
         cpu, mem = _cpu_milli(res.get("cpu")), _mem_gi(res.get("memory"))
@@ -106,6 +132,10 @@ def analyze_profile(path: str, doc, kind: str):
                               f"line {line_of(di, 'image')}: {di['image']}",
                               "An unpinned tag lets the image change under a profile deployed to many devices.",
                               "Pin a specific version.", MANUAL_ONLY, line=line_of(di, "image"), target=f"{name}:image"))
+        if di and isinstance(di.get("image"), str):
+            rf = registry_finding(path, name, di["image"], line_of(di, "image"), f"{name}:registry")
+            if rf:
+                out.append(rf)
         for blk, urlk in (("androidApk", "apkUrl"), ("esp32Binary", "binaryUrl")):
             b = wl.get(blk)
             if is_map(b):

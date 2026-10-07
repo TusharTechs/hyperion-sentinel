@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img alt="tests" src="https://img.shields.io/badge/tests-203%20passing-5EEAD4?style=flat-square&labelColor=0E1736">
+  <img alt="tests" src="https://img.shields.io/badge/tests-213%20passing-5EEAD4?style=flat-square&labelColor=0E1736">
   <img alt="python" src="https://img.shields.io/badge/python-3.14-93C5FD?style=flat-square&labelColor=0E1736">
   <img alt="docker" src="https://img.shields.io/badge/docker-amd64%20%C2%B7%20non--root-C4B5FD?style=flat-square&labelColor=0E1736">
   <img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-FCD34D?style=flat-square&labelColor=0E1736">
@@ -39,7 +39,7 @@ The challenge states that submissions are scored **after the hackathon by runnin
 |---|---|---|---|---|
 | 1 | **Working agent**: `/chat`, answers HYPER-AI questions, turns language into **IDE actions** (writes the file *and opens it*) | FastAPI `POST /chat` on `:8000`, SSE increments + `create_file` / `edit_file` / `delete_file` actions the IDE executes | [`main.py`](main.py), [`hyperion/actions.py`](hyperion/actions.py) | real IDE run, `tests/test_api.py`, `tests/test_agent.py` |
 | 2 | **Guardrails**: reject irrelevant queries | deterministic scope + prompt-injection rules; LLM only for ambiguous text and **fails closed**; refusals never touch files | [`hyperion/guard.py`](hyperion/guard.py) | `tests/test_guardrails.py` (15 off-topic / injection prompts) |
-| 3 | **RAG**: ground answers in HYPER-AI docs | BM25 over paragraph chunks of the six official deliverables + IDE notes; answers cite sources; says "the documentation does not provide enough information" instead of guessing; works offline | [`hyperion/rag.py`](hyperion/rag.py), [`knowledge/`](knowledge/) | `tests/test_agent.py` |
+| 3 | **RAG**: ground answers in HYPER-AI docs | hybrid retrieval (BM25 + `nomic-embed-text` vectors, silently falls back to BM25) over heading-aware chunks of the six official deliverables **and the official HyperAI IDE tutorial**; answers cite the exact section; required-field questions are answered deterministically from the tutorial's tables; says "the documentation does not provide enough information" instead of guessing; document vectors are baked in | [`hyperion/rag.py`](hyperion/rag.py), [`hyperion/docfacts.py`](hyperion/docfacts.py), [`knowledge/`](knowledge/) | `tests/test_agent.py` |
 | 4 | **Memory** across turns of a session | bounded per-`user_id` session: history, findings (so "fix the *second* issue" works), plan, pending confirmation, facts ("my name is…"), last file/image ("delete *it*") | [`hyperion/memory.py`](hyperion/memory.py) | `tests/test_memory_offline.py` |
 | 5 | **Human-in-the-loop** (optional) for delete / overwrite | every delete, every overwrite of an existing file and every remediation plan waits for an explicit "yes"; "no" cancels; mass deletes refused | [`hyperion/agent.py`](hyperion/agent.py) | `tests/test_file_safety.py` |
 | ★ | **Differentiator**: a real engineering agent, not a chatbot | the **Sentinel** analyzer + remediation engine (below) | [`hyperion/analyzer/`](hyperion/analyzer/), [`hyperion/remediation.py`](hyperion/remediation.py) | `tests/test_analyzer.py`, `tests/test_remediation.py`, `tests/test_hero_flow.py` |
@@ -84,7 +84,7 @@ Agent   Edited Dockerfile: `FROM python:latest` → `python:3.12-slim`, added HE
 | **Dockerfile** | `latest`/untagged base, full-size base, root user, missing `HEALTHCHECK`, `apt` recommends/cache, `pip` cache, compilers in single-stage builds, missing `.dockerignore`, secrets in `ENV` |
 | **Kubernetes** | CPU/memory requests & limits, readiness/liveness probes, privileged, `hostNetwork`/`hostPID`/`hostIPC`, `runAsNonRoot`, unpinned images, replica count, placement hints, Service type; multi-document YAML |
 | **Docker Compose** | unpinned images, restart policy, resource limits, healthcheck, privileged, host mounts, external networks, hardcoded credentials |
-| **HYPER-AI profiles** | native + device application profiles: unpinned images, public ports, missing arm64, oversized requests, plain-HTTP artifacts, missing checksums - plus the **IDE's own validator** (`/api/agent/validation/file`) folded into the report |
+| **HYPER-AI profiles** | native + device application profiles: unpinned images, images outside a public whitelisted registry (per the official tutorial), public ports, missing arm64, oversized requests, plain-HTTP artifacts, missing checksums - plus the **IDE's own validator** (`/api/agent/validation/file`) folded into the report |
 | **Dependencies** | unpinned / ranged versions, dev tools in production, heavy and native-build packages, dependency count (`requirements*.txt`, `package.json`) |
 | **Config & secrets** | hardcoded secrets (**never printed**: evidence shows `KEY=<redacted>`), hardcoded external URLs, `.env` without `.env.example` |
 | **Completeness** | missing Dockerfile, deployment manifest, README, dependency manifest |
@@ -116,7 +116,7 @@ sequenceDiagram
     H-->>IDE: SSE  35 → 65, resolved findings, what remains
 ```
 
-### The IDE protocol (reverse-engineered - the starter does not document it)
+### The IDE protocol (reverse-engineered, then confirmed by the official "Hyperion Actions" page of the IDE tutorial)
 
 * The chat panel `POST`s `{user_id, text}` to `http://localhost:8000/chat` and reads SSE `data:` events.
 * An event whose JSON has an **`action`** key is executed by the IDE instead of shown: `create_file` (writes **and opens it in the editor**; fails if it exists), `edit_file` (overwrite + open), `delete_file`, `create_folder`, `delete_folder`, `write_yaml_to_editor`. Text goes in `{"response": "<increment>"}`; `data: [DONE]` ends the stream.
@@ -132,7 +132,9 @@ hyperion-sentinel/
 ├── hyperion/
 │   ├── agent.py               intent routing, HITL confirmations, conversation memory, Q&A
 │   ├── guard.py               scope + prompt-injection guardrails (fail closed)
-│   ├── rag.py                 BM25 retrieval over knowledge/
+│   ├── rag.py                 hybrid BM25 + dense retrieval over knowledge/ (heading-aware chunks, cited sections)
+│   ├── embeddings.py          hosted query embeddings (nomic-embed-text) with BM25 fallback
+│   ├── docfacts.py            deterministic facts from the tutorial tables (required profile fields)
 │   ├── memory.py              bounded per-user_id sessions
 │   ├── actions.py             SSE framing + IDE action events
 │   ├── workspace.py           IDE backend reader, path-safety (traversal, absolute, hidden…)
@@ -143,8 +145,8 @@ hyperion-sentinel/
 │   ├── models.py              Finding model + deterministic score
 │   ├── config.py              environment configuration
 │   └── analyzer/              engine + rules: docker, k8s, compose, profile, deps, config
-├── knowledge/                 official HYPER-AI docs (.docx sources + cleaned .md used for RAG)
-├── tests/                     203 tests: API, guardrails, safety, analyzer, remediation, agent, memory
+├── knowledge/                 official HYPER-AI docs + IDE tutorial (.md used for RAG) + precomputed embeddings.json
+├── tests/                     213 tests: API, guardrails, safety, analyzer, remediation, agent, memory
 ├── demo/                      hero workspace, seed_workspace.py, analyze_dir.py
 ├── scripts/                   build_knowledge.py (docx → md), make_slides.py, record_demo.py, assemble_video.py
 ├── assets/                    logo, banner, architecture diagram, slides
@@ -185,6 +187,7 @@ uv run python demo/analyze_dir.py demo/hero      # the analyzer on a local folde
 | `LLM_BASE_URL` | `https://legion1.di.uoa.gr/v1` | endpoint (Ollama: `http://host.docker.internal:11434/v1`) |
 | `LLM_MODEL` | `llama3.1` | model |
 | `LLM_TIMEOUT` | `60` | seconds per LLM call |
+| `EMBED_MODEL` / `EMBED_DISABLED` | `nomic-embed-text` / unset | hosted embedding model for hybrid retrieval; set `EMBED_DISABLED=1` for BM25 only |
 | `IDE_BACKEND_URL` | `http://localhost:3001/api` (image: `http://host.docker.internal:3001/api`) | IDE backend |
 
 ### Docker
@@ -198,7 +201,7 @@ Multi-stage, **non-root** (uid 10001), `HEALTHCHECK`, listens on `0.0.0.0:8000`,
 ## Tests
 
 ```bash
-uv run pytest -q      # 203 tests
+uv run pytest -q      # 213 tests
 ```
 
 They run the whole agent against a simulated IDE (`tests/conftest.py: FakeIDE`) that executes SSE actions like the real IDE, including a laggy mode and an unreachable-backend mode. LLM calls are faked. Coverage: valid / malformed / missing-field requests, SSE framing, LLM failure and timeout, off-topic and injection prompts, path traversal, malformed YAML, large files, empty workspace, every finding type, remediation idempotence, HITL (confirm / cancel / mass-delete refusal), "fix the second issue", "what did you change?", and name/file memory.
@@ -220,7 +223,7 @@ Reset with `uv run python demo/seed_workspace.py`, reload the IDE, open Hyperion
 * Confirmation is conversational because the IDE protocol has no confirm event.
 * Free-form file generation/edits and RAG answers depend on the quality of the 8B model; edits are always diffed and confirmed first.
 * Image pinning uses a small table of conservative tags, not a registry lookup.
-* RAG grounding is the six official deliverable summaries plus short IDE notes - that is all the documentation provided.
+* RAG grounding is the six official deliverable summaries, the official HyperAI IDE tutorial and a short challenge overview - that is all the documentation provided. Dense retrieval needs the hosted embeddings endpoint; without it retrieval is BM25-only.
 
 ## Credits & license
 

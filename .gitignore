@@ -12,3 +12,6 @@ wheels/
 ca-bundle.pem
 .env
 video/
+.DS_Store
+**/.DS_Store
+knowledge/_incoming/

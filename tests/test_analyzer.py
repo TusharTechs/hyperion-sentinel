@@ -163,3 +163,19 @@ async def test_analyzer_survives_binary_and_odd_files():
              "d.yaml": "kind: Deployment\napiVersion: apps/v1\nspec: 1\n", "requirements.txt": "-r other.txt\n===\n"}
     r = await analyze_workspace(Snapshot(files))
     assert isinstance(r.score, int)
+
+
+async def test_registry_rule_flags_non_dockerhub_native_and_device():
+    native = "applicationProfile:\n  metadata: {name: x}\n  specs:\n    runtime:\n      containerImage: {uri: registry.example.com/org/app, tag: '1.0.0'}\n"
+    found, r = await rules({"p.yaml": native})
+    assert "PROF-REGISTRY" in found
+    assert "registry.example.com" in next(f for f in r.findings if f.rule == "PROF-REGISTRY").finding
+    device = "apiVersion: hyper.ai/v1\nkind: Application\nmetadata: {name: d}\nspec:\n  workload:\n    kind: DockerImage\n    dockerImage: {image: ghcr.io/org/app:1.0}\n"
+    assert "PROF-REGISTRY" in (await rules({"d.yaml": device}))[0]
+
+
+async def test_registry_rule_quiet_for_docker_hub():
+    ok = "applicationProfile:\n  metadata: {name: x}\n  specs:\n    runtime:\n      containerImage: {uri: nginx, tag: '1.27'}\n"
+    assert "PROF-REGISTRY" not in (await rules({"p.yaml": ok}))[0]
+    ok2 = ok.replace("uri: nginx", "uri: docker.io/tushartechs/hyperion")
+    assert "PROF-REGISTRY" not in (await rules({"p.yaml": ok2}))[0]
