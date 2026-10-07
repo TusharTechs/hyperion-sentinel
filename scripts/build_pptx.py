@@ -22,7 +22,7 @@ ARIAL = "/System/Library/Fonts/Supplemental/Arial.ttf"
 ARIAL_B = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
 
 GITHUB = "https://github.com/TusharTechs/hyperion-sentinel"
-VIDEO = "https://youtu.be/7AZYCdE_vZU"
+VIDEO = "https://youtu.be/ZP7SHtDgncU"
 DOCKER = "https://hub.docker.com/r/tushartechs/hyperion"
 
 # --------------------------------------------------------------------------- content

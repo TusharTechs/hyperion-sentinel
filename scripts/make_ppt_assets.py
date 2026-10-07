@@ -55,7 +55,7 @@ render("stats", f'<html><head>{BASE}</head><body><div style="display:flex;gap:12
 
 # 3) links with QR codes (9.32in x 2.0in)
 links = [("Source code", "github.com/TusharTechs/<br>hyperion-sentinel", "https://github.com/TusharTechs/hyperion-sentinel"),
-         ("Live demo", "youtu.be/<br>7AZYCdE_vZU", "https://youtu.be/7AZYCdE_vZU"),
+         ("Live demo", "youtu.be/<br>ZP7SHtDgncU", "https://youtu.be/ZP7SHtDgncU"),
          ("Docker image", "hub.docker.com/r/<br>tushartechs/hyperion", "https://hub.docker.com/r/tushartechs/hyperion")]
 cards = ""
 for title, shown, url in links:
