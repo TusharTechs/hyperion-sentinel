@@ -27,6 +27,7 @@
 | **Live HyperAI IDE** / **tutorial** | [ide.hyperai.di.uoa.gr](https://ide.hyperai.di.uoa.gr/) · [ide-tutorial.hyperai.di.uoa.gr](https://ide-tutorial.hyperai.di.uoa.gr/) |
 | **RAG knowledge base** (official HYPER-AI docs) | [`knowledge/`](knowledge/) |
 | **Demo video** (2 min, recorded live in the real IDE with the real LLM) | [YouTube](https://youtu.be/ZP7SHtDgncU) · [mp4 in repo](docs/hyperion-sentinel-demo.mp4) · [subtitles](docs/hyperion-sentinel-demo.srt) |
+| **Submission deck** (the 3-page Veles Hack template) | [PDF](docs/VelesHack_HyperionSentinel_Submission.pdf) · [PPTX](docs/VelesHack_HyperionSentinel_Submission.pptx) |
 | **Architecture diagram** | [`assets/architecture.svg`](assets/architecture.svg) |
 | **Demo workspace** (deliberately imperfect app) | [`demo/hero/`](demo/hero/) |
 | **Run the tests** | `uv run pytest -q` - see [Tests](#tests) |
