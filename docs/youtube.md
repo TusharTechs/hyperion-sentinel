@@ -23,19 +23,19 @@ CHAPTERS
 0:00 The problem: edge deployments fail on the basics
 0:17 The impact: one conversation instead of a manual audit
 0:32 How it works (architecture)
-0:50 LIVE - Edge Readiness report in the HYPER-AI IDE
-1:07 What should I fix first?
-1:14 The remediation plan (nothing changes yet)
-1:24 Confirm, apply, verify: 35 to 65
-1:37 RAG: answers grounded in the official HYPER-AI docs
-1:46 Guardrails: off-topic requests refused
-1:52 Human-in-the-loop: asks before deleting
-2:00 Wrap-up
+0:53 LIVE - Edge Readiness report in the HYPER-AI IDE
+1:10 What should I fix first?
+1:17 The remediation plan (nothing changes yet)
+1:28 Confirm, apply, verify: 35 to 65
+1:41 RAG: answers from the official docs and the IDE tutorial, with cited sections
+1:52 Guardrails: off-topic requests refused
+1:58 Human-in-the-loop: asks before deleting
+2:07 Wrap-up
 
 WHAT IT COVERS
 - Working agent: natural language into real IDE actions (create / edit / delete files, opened in the editor)
 - Guardrails: scope + prompt-injection rules, fail closed
-- RAG over the official HYPER-AI documentation, with sources
+- RAG over the official HYPER-AI documentation and the official IDE tutorial, citing the exact section
 - Per-session memory ("fix the second issue", "delete it")
 - Human-in-the-loop confirmation for deletes, overwrites and plans
 - Deterministic Edge Readiness analyzer: Dockerfile, Kubernetes, Docker Compose, HYPER-AI application profiles, dependencies, secrets
